@@ -1,0 +1,9 @@
+server:
+  port: 8083
+spring:
+  application:
+    name: history
+  datasource:
+    url: jdbc:mysql://localhost:3308/history_db
+    username: root
+    password: root
