@@ -182,17 +182,17 @@ CREATE TABLE processed_events (
 ## 6. Roteiro de passos
 
 - [x] **0. Setup** — submódulo baixado; `pom.xml` reescrito (add `oauth2-resource-server`, `spring-kafka`, `cache`+`caffeine`, `actuator`, `spring-kafka-test`, Testcontainers `mysql`+`kafka`, WireMock, JaCoCo; testes consolidados); `docker-compose.yml` (mysql-history:3308 + kafka KRaft + app); `Dockerfile`; `public.pem` atualizado para `keys/public.pem`; `HistoryApplicationTests` `@Disabled`.
-- [ ] **1. Config + migration** — `application.yaml` (§5); `schema.graphqls`; `V1__create_history.sql`.
-- [ ] **2. Domínio** — `AppointmentStatus`, `AppointmentRecord` (`isFuture`), `CallerContext` (`effectivePatientId`) + testes.
-- [ ] **3. Portas + command** — `HistoryRepository`, `ProcessedEventStore`, `UserDirectory`, `RecordEventCommand`, `EnrichedAppointment`.
-- [ ] **4. `RecordAppointmentUseCase`** + teste: idempotência (`eventId` repetido não faz upsert); `Created` e `Updated` chamam `upsert`; ordem `exists → upsert → markProcessed`.
-- [ ] **5. `QueryHistoryUseCase`** + teste: PATIENT ignora o argumento (usa o do token); DOCTOR/NURSE usa o argumento; `future` filtra por `isFuture(now)`; enrich resolve nomes; nome ausente → "Unknown".
-- [ ] **6. Persistência** — `AppointmentHistoryEntity` (upsert via `@Version`), `HistoryRepositoryImpl`, `ProcessedEventEntity`/`JdbcProcessedEventStore` (insert-only). Testes Mockito.
-- [ ] **7. Messaging** — `AppointmentEventMessage` (cópia), `KafkaTopicConfig` (`NewTopic` 3 partições), `AppointmentEventListener` (`@KafkaListener` → command). Teste do mapeamento.
-- [ ] **8. `IdentityHttpUserDirectory`** + `CacheConfig` — `RestClient` + `@Cacheable("user-names")`; 404 → `Optional.empty()`. Teste `MockRestServiceServer`.
-- [ ] **9. Web + segurança** — `SecurityConfig` (resource server, `role`→`ROLE_`, `JwtValidators` com issuer); `HistoryQueryController` (`@QueryMapping` + `@PreAuthorize`, monta `CallerContext` do `Jwt`, mapeia `EnrichedAppointment`→`HistoryItem`); `GraphQlExceptionResolver`. Testes unit do controller.
-- [ ] **10. Wiring + IT** — `UseCaseConfig`; `SecurityTestConfig` (par RSA em memória) + `application-test.yaml`; `HistoryIntegrationTest` (Testcontainers Kafka+MySQL + WireMock stub identity): publica `AppointmentCreated` → aparece em `history`; `AppointmentUpdated` → status muda; evento repetido → sem duplicata; PATIENT só vê o seu (403/filtro); DOCTOR vê qualquer um. Auto-pula sem Docker.
-- [ ] **11. Fechamento** — `README.md` (solução, o que sobe no Docker, serviços externos, como testar), `TESTAR-COM-DOCKER.md`, JaCoCo, `Dockerfile` (feito).
+- [x] **1. Config + migration** — `application.yaml` (§5); `schema.graphqls`; `V1__create_history.sql`.
+- [x] **2. Domínio** — `AppointmentStatus`, `AppointmentRecord` (`isFuture`), `CallerContext` (`effectivePatientId`) + testes.
+- [x] **3. Portas + command** — `HistoryRepository`, `ProcessedEventStore`, `UserDirectory`, `RecordEventCommand`, `EnrichedAppointment`.
+- [x] **4. `RecordAppointmentUseCase`** + teste: idempotência (`eventId` repetido não faz upsert); `Created` e `Updated` chamam `upsert`; ordem `exists → upsert → markProcessed`.
+- [x] **5. `QueryHistoryUseCase`** + teste: PATIENT ignora o argumento (usa o do token); DOCTOR/NURSE usa o argumento; `future` filtra por `isFuture(now)`; enrich resolve nomes; nome ausente → "Unknown".
+- [x] **6. Persistência** — `AppointmentHistoryEntity` (upsert via `@Version`), `HistoryRepositoryImpl`, `ProcessedEventEntity`/`JdbcProcessedEventStore` (insert-only). Testes Mockito.
+- [x] **7. Messaging** — `AppointmentEventMessage` (cópia), `KafkaTopicConfig` (`NewTopic` 3 partições), `AppointmentEventListener` (`@KafkaListener` → command). Teste do mapeamento.
+- [x] **8. `IdentityHttpUserDirectory`** + `CacheConfig` — `RestClient` + `@Cacheable("user-names")`; 404 → `Optional.empty()`. Teste `MockRestServiceServer`.
+- [x] **9. Web + segurança** — `SecurityConfig` (resource server, `role`→`ROLE_`, `JwtValidators` com issuer); `HistoryQueryController` (`@QueryMapping` + `@PreAuthorize`, monta `CallerContext` do `Jwt`, mapeia `EnrichedAppointment`→`HistoryItem`); `GraphQlExceptionResolver`. Testes unit do controller.
+- [x] **10. Wiring + IT** — `UseCaseConfig`; `SecurityTestConfig` (par RSA em memória); `HistoryIntegrationTest` (Testcontainers Kafka+MySQL + WireMock stub identity): publica `AppointmentCreated` → aparece em `history`; `AppointmentUpdated` → status muda; evento repetido → sem duplicata; PATIENT só vê o seu; DOCTOR vê qualquer um. Auto-pula sem Docker (verificado nesta máquina: `BUILD SUCCESS`, 33 testes unit/component, integração skip por assumption, cobertura ~97%).
+- [x] **11. Fechamento** — `README.md` (solução, o que sobe no Docker, serviços externos, como testar), `TESTAR-COM-DOCKER.md`, JaCoCo, `Dockerfile` (feito).
 
 ---
 
