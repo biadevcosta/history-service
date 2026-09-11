@@ -1,5 +1,6 @@
 server:
   port: 8083
+
 spring:
   application:
     name: history
@@ -7,3 +8,43 @@ spring:
     url: jdbc:mysql://localhost:3308/history_db
     username: root
     password: root
+  flyway:
+    enabled: true
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: history
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JacksonJsonDeserializer
+      properties:
+        spring.json.use.type.headers: false
+        spring.json.value.default.type: com.biadevcosta.history.infrastructure.messaging.AppointmentEventMessage
+        spring.json.trusted.packages: com.biadevcosta.*
+  cache:
+    cache-names: user-names
+    caffeine:
+      spec: maximumSize=2000,expireAfterWrite=10m
+  graphql:
+    graphiql:
+      enabled: true
+    schema:
+      printer:
+        enabled: true
+
+security:
+  jwt:
+    public-key: classpath:public.pem
+    issuer: hospital-identity
+
+app:
+  identity:
+    base-url: http://localhost:8080
+  kafka:
+    topic: appointment-events
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

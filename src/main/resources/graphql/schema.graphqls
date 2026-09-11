@@ -1,0 +1,15 @@
+type Query {
+    "Full appointment history for a patient. PATIENT tokens always see their own, ignoring patientId."
+    history(patientId: ID): [HistoryItem!]!
+    "Only SCHEDULED appointments still ahead of now, for a patient."
+    futureAppointments(patientId: ID): [HistoryItem!]!
+}
+
+type HistoryItem {
+    id: ID!
+    patientName: String!
+    doctorName: String!
+    scheduledAt: String!
+    "SCHEDULED | COMPLETED | CANCELLED"
+    status: String!
+}

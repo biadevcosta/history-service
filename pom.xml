@@ -43,6 +43,11 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-graphql</artifactId>
 		</dependency>
+		<!-- Boot 4.1 split RestClient.Builder auto-configuration out of the web starter -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-restclient</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-validation</artifactId>
@@ -62,10 +67,12 @@
 			<artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
 		</dependency>
 
-		<!-- inbound: Kafka appointment-events -->
+		<!-- inbound: Kafka appointment-events. spring-boot-starter-kafka pulls spring-kafka + the
+		     spring-boot-kafka autoconfig module (@KafkaListener container factory). Boot 4 no longer
+		     autoconfigures Kafka from a bare spring-kafka dependency (see scheduling-service's pom). -->
 		<dependency>
-			<groupId>org.springframework.kafka</groupId>
-			<artifactId>spring-kafka</artifactId>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-kafka</artifactId>
 		</dependency>
 
 		<!-- cache for the identity name lookups -->
