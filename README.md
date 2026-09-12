@@ -6,6 +6,24 @@ scheduling-service, builds its own read model, and serves two GraphQL queries: `
 
 Port: **8083**.
 
+> Part of the [Hospital Appointment System](../README.md) — see the root README for the
+> system-wide architecture, business rules, and how to run all four services together.
+
+## Key features
+
+- **CQRS read side**: never written to by a client directly — its entire read model is built by
+  consuming `appointment-events` from Kafka.
+- **`history`** and **`futureAppointments`** GraphQL queries, open to `DOCTOR`, `NURSE` and
+  `PATIENT`.
+- **A patient only ever sees their own data**: for a `PATIENT` token, the `patientId` from the
+  request argument is ignored and replaced by the one in the token — enforced in the use case, not
+  just at the gate.
+- **Idempotent Kafka consumption**: a `processed_events` table keyed by `eventId` makes a
+  redelivered event a no-op, so at-least-once delivery never double-counts an appointment.
+- Enriches every record with the **current** patient/doctor name, resolved from `identity-service`
+  at query time (falls back to `"Unknown"` if the user lookup fails, so a query never breaks because
+  of a name lookup).
+
 ## Architecture (Clean Architecture)
 
 ```
